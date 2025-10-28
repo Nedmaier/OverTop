@@ -29,12 +29,12 @@ html, body {
 .logo-metal {
   position: fixed;
   left: 50%;
-  top: 50%; /* старт в центре экрана */
+  top: 50%;
   transform: translate(-50%, -50%) scale(0.3);
   opacity: 0;
-  animation: logoIntro 4s ease-in-out forwards; /* чуть дольше для плавности */
+  animation: logoIntro 4s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  will-change: transform, opacity;
   z-index: 10;
-  transition: transform 0.4s ease;
 }
 
 .logo-metal img {
@@ -66,7 +66,6 @@ html, body {
 @keyframes logoIntro {
   0% {
     opacity: 0;
-    top: 50%;
     transform: translate(-50%, -50%) scale(0.3);
   }
   30% {
@@ -75,17 +74,15 @@ html, body {
   }
   58% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.03); /* лёгкий "вдох" */
-  }
-  70% {
-    opacity: 1;
-    top: 50%; /* ещё в центре — небольшая пауза перед движением */
     transform: translate(-50%, -50%) scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
   }
   100% {
     opacity: 1;
-    top: 60px; /* финальное положение — фиксировано */
-    transform: translateX(-50%) scale(0.7);
+    transform: translate(-50%, calc(-50% - 40vh)) scale(0.7);
   }
 }
 
