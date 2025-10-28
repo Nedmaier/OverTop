@@ -442,4 +442,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+// === СВАЙП-ПЕРЕКЛЮЧЕНИЕ С ИНЕРЦИЕЙ ДЛЯ МОБИЛЬНЫХ СЛАЙДЕРОВ ===
+document.addEventListener('DOMContentLoaded', () => {
+  const sliders = document.querySelectorAll('.slider');
+
+  sliders.forEach(slider => {
+    let startX = 0;
+    let currentX = 0;
+    let isSwiping = false;
+
+    const slides = slider.querySelectorAll('.slide');
+    const dots = slider.querySelectorAll('.dot');
+    let activeIndex = [...slides].findIndex(s => s.classList.contains('active'));
+
+    // плавное возвращение
+    slides.forEach(s => s.style.transition = 'transform 0.25s ease');
+
+    slider.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      currentX = startX;
+      isSwiping = true;
+      slides.forEach(s => s.style.transition = 'none'); // отключаем во время свайпа
+    }, { passive: true });
+
+    slider.addEventListener('touchmove', e => {
+      if (!isSwiping) return;
+      currentX = e.touches[0].clientX;
+      const diff = currentX - startX;
+
+      slides.forEach((s, i) => {
+        if (i === activeIndex) s.style.transform = `translateX(${diff * 0.25}px)`; // 25% движения пальца
+      });
+    }, { passive: true });
+
+    slider.addEventListener('touchend', () => {
+      if (!isSwiping) return;
+      isSwiping = false;
+
+      const diff = currentX - startX;
+      slides.forEach(s => s.style.transition = 'transform 0.25s ease');
+
+      // если свайп короткий → вернуться обратно
+      if (Math.abs(diff) < 40) {
+        slides[activeIndex].style.transform = 'translateX(0)';
+        return;
+      }
+
+      // свайп влево → след.
+      if (diff < 0) activeIndex++;
+      // свайп вправо → пред.
+      else activeIndex--;
+
+      if (activeIndex < 0) activeIndex = slides.length - 1;
+      if (activeIndex >= slides.length) activeIndex = 0;
+
+      // переключаем активный слайд
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === activeIndex);
+        s.style.transform = 'translateX(0)';
+      });
+
+      dots.forEach((d, i) => d.classList.toggle('active', i === activeIndex));
+    });
+  });
+});
+
+
 
