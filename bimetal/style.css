@@ -1092,7 +1092,7 @@ h2::after{
   width: 10px;
   height: 10px;
   background: none;
-  box-shadow: inset -1px -1px 1px rgba(255,255,255,0.2);
+ 
 }
 
 /* === Типы файлов через data-type === */
