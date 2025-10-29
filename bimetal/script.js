@@ -241,23 +241,38 @@ async function renderDocuments() {
   }
 
   // === 4️⃣ Отображаем найденные документы ===
-  container.innerHTML = files.map(file => {
-    const ext = file.name.split('.').pop().toLowerCase();
-    let type = '';
-    switch (ext) {
-      case 'pdf': type = 'pdf'; break;
-      case 'doc': case 'docx': type = 'doc'; break;
-      case 'xls': case 'xlsx': type = 'xls'; break;
-      case 'ppt': case 'pptx': type = 'ppt'; break;
-      default: type = 'file';
-    }
-	console.log('🧩 file:', file.name, '→ ext:', ext);
-    return `
-      <a href="${file.path}" class="doc-item" data-type="${type}" download>
-        <span class="doc-name">${file.name}</span>
-      </a>
-    `;
-  }).join('');
+ container.innerHTML = files.map(file => {
+  // 1️⃣ Определяем имя
+  const fullName = file.name || file.path.split('/').pop();
+  const cleanName = fullName.split('?')[0].trim();
+
+  // 2️⃣ Извлекаем расширение
+  let ext = '';
+  const parts = cleanName.split('.');
+  if (parts.length > 1) {
+    const last = parts.pop().toLowerCase();
+    // фильтруем даты/цифры типа "25" или "2025"
+    if (!/^\d{1,4}$/.test(last)) ext = last;
+  }
+
+  // 3️⃣ Определяем тип по расширению
+  let type = 'file';
+  switch (ext) {
+    case 'pdf': type = 'pdf'; break;
+    case 'doc': case 'docx': type = 'doc'; break;
+    case 'xls': case 'xlsx': type = 'xls'; break;
+    case 'ppt': case 'pptx': type = 'ppt'; break;
+  }
+
+  console.log('🧩', cleanName, '→ ext:', ext, '→ type:', type);
+
+  // 4️⃣ Генерируем элемент
+  return `
+    <a href="${file.path}" class="doc-item" data-type="${type}" download>
+      <span class="doc-name">${cleanName}</span>
+    </a>
+  `;
+}).join('');
 }
 
 
