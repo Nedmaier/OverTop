@@ -241,21 +241,19 @@ async function renderDocuments() {
   }
 
   // === 4️⃣ Отображаем найденные документы ===
- container.innerHTML = files.map(file => {
-  // 1️⃣ Определяем имя
+container.innerHTML = files.map(file => {
+  // 1️⃣ Определяем имя (то, что показывается пользователю)
   const fullName = file.name || file.path.split('/').pop();
   const cleanName = fullName.split('?')[0].trim();
 
-  // 2️⃣ Извлекаем расширение
-  let ext = '';
-  const parts = cleanName.split('.');
-  if (parts.length > 1) {
-    const last = parts.pop().toLowerCase();
-    // фильтруем даты/цифры типа "25" или "2025"
-    if (!/^\d{1,4}$/.test(last)) ext = last;
-  }
+  // 2️⃣ Определяем источник расширения
+  const sourceForExt = (file.name && /\.[a-z0-9]+$/i.test(file.name)) ? file.name : file.path;
 
-  // 3️⃣ Определяем тип по расширению
+  // 3️⃣ Извлекаем расширение
+  const cleanPath = sourceForExt.split('?')[0];
+  const ext = cleanPath.split('.').pop().toLowerCase();
+
+  // 4️⃣ Определяем тип
   let type = 'file';
   switch (ext) {
     case 'pdf': type = 'pdf'; break;
@@ -266,7 +264,7 @@ async function renderDocuments() {
 
   console.log('🧩', cleanName, '→ ext:', ext, '→ type:', type);
 
-  // 4️⃣ Генерируем элемент
+  // 5️⃣ Генерация HTML
   return `
     <a href="${file.path}" class="doc-item" data-type="${type}" download>
       <span class="doc-name">${cleanName}</span>
