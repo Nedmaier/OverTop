@@ -1127,6 +1127,51 @@ h2::after{
   animation: docGlow 2.2s ease-in-out infinite;
 }
 
+/* === Надписи типов документов === */
+.doc-item[data-type]:before {
+  position: relative;
+}
+
+/* Общий стиль для текста поверх иконки */
+.doc-item[data-type]::after {
+  content: attr(data-type);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  mix-blend-mode: screen; /* мягко светится на фоне */
+}
+
+/* индивидуальные цвета свечения */
+.doc-item[data-type="pdf"]::after {
+  text-shadow: 0 0 6px rgba(255, 70, 0, 0.7);
+}
+
+.doc-item[data-type="doc"]::after {
+  text-shadow: 0 0 6px rgba(60, 120, 255, 0.6);
+}
+
+.doc-item[data-type="xls"]::after {
+  text-shadow: 0 0 6px rgba(0, 200, 100, 0.6);
+}
+
+.doc-item[data-type="ppt"]::after {
+  text-shadow: 0 0 6px rgba(255, 140, 0, 0.7);
+}
+
+
+
 .doc-name {
   flex: 1;
   font-weight: 500;
