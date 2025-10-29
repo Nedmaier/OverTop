@@ -1091,8 +1091,7 @@ h2::after{
   top: 7px;
   width: 10px;
   height: 10px;
-  background: var(--bg-0);
-  transform: rotate(45deg);
+  background: none;
   box-shadow: inset -1px -1px 1px rgba(255,255,255,0.2);
 }
 
@@ -1136,8 +1135,8 @@ h2::after{
 .doc-item[data-type]::after {
   content: attr(data-type);
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 18;
+  top: 14;
   width: 28px;
   height: 32px;
   display: flex;
