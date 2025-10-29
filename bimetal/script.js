@@ -251,7 +251,7 @@ async function renderDocuments() {
       case 'ppt': case 'pptx': type = 'ppt'; break;
       default: type = 'file';
     }
-
+	console.log('🧩 file:', file.name, '→ ext:', ext);
     return `
       <a href="${file.path}" class="doc-item" data-type="${type}" download>
         <span class="doc-name">${file.name}</span>
@@ -442,70 +442,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-// === СВАЙП-ПЕРЕКЛЮЧЕНИЕ С ИНЕРЦИЕЙ ДЛЯ МОБИЛЬНЫХ СЛАЙДЕРОВ ===
+// === СВАЙП-ПЕРЕКЛЮЧЕНИЕ ДЛЯ МОБИЛЬНЫХ СЛАЙДЕРОВ ===
 document.addEventListener('DOMContentLoaded', () => {
   const sliders = document.querySelectorAll('.slider');
 
   sliders.forEach(slider => {
     let startX = 0;
-    let currentX = 0;
-    let isSwiping = false;
-
-    const slides = slider.querySelectorAll('.slide');
-    const dots = slider.querySelectorAll('.dot');
-    let activeIndex = [...slides].findIndex(s => s.classList.contains('active'));
-
-    // плавное возвращение
-    slides.forEach(s => s.style.transition = 'transform 0.25s ease');
+    let endX = 0;
 
     slider.addEventListener('touchstart', e => {
       startX = e.touches[0].clientX;
-      currentX = startX;
-      isSwiping = true;
-      slides.forEach(s => s.style.transition = 'none'); // отключаем во время свайпа
     }, { passive: true });
 
     slider.addEventListener('touchmove', e => {
-      if (!isSwiping) return;
-      currentX = e.touches[0].clientX;
-      const diff = currentX - startX;
-
-      slides.forEach((s, i) => {
-        if (i === activeIndex) s.style.transform = `translateX(${diff * 0.25}px)`; // 25% движения пальца
-      });
+      endX = e.touches[0].clientX;
     }, { passive: true });
 
     slider.addEventListener('touchend', () => {
-      if (!isSwiping) return;
-      isSwiping = false;
+      const diff = endX - startX;
+      if (Math.abs(diff) < 40) return; // минимальный порог движения
 
-      const diff = currentX - startX;
-      slides.forEach(s => s.style.transition = 'transform 0.25s ease');
+      const slides = slider.querySelectorAll('.slide');
+      const dots = slider.querySelectorAll('.dot');
+      let activeIndex = [...slides].findIndex(s => s.classList.contains('active'));
 
-      // если свайп короткий → вернуться обратно
-      if (Math.abs(diff) < 40) {
-        slides[activeIndex].style.transform = 'translateX(0)';
-        return;
-      }
-
-      // свайп влево → след.
+      // свайп влево → следующая
       if (diff < 0) activeIndex++;
-      // свайп вправо → пред.
+      // свайп вправо → предыдущая
       else activeIndex--;
 
       if (activeIndex < 0) activeIndex = slides.length - 1;
       if (activeIndex >= slides.length) activeIndex = 0;
 
-      // переключаем активный слайд
-      slides.forEach((s, i) => {
-        s.classList.toggle('active', i === activeIndex);
-        s.style.transform = 'translateX(0)';
-      });
-
+      // переключаем слайды и точки
+      slides.forEach((s, i) => s.classList.toggle('active', i === activeIndex));
       dots.forEach((d, i) => d.classList.toggle('active', i === activeIndex));
     });
   });
 });
-
 
 
